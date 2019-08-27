@@ -1,125 +1,60 @@
 <template>
-  <div @click="clickHandle">
+<div class="wrapper">
+  <div class="scale-wrapper">
+    <scale v-if="parentWidth!=0" :parentWidth="parentWidth" :min='100' :max="210" :targetNum="targetNum-100" :unit="'厘米'" @selectValue="selectValue"></scale>
+    <scale v-if="parentWidth!=0" :parentWidth="parentWidth" :min='0' :max="100" :targetNum="weight" :unit="'公斤'" @selectWeight="selectWeight"></scale>
 
-    <div class="userinfo" @click="bindViewTap">
-      <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
-      <img class="userinfo-avatar" src="/static/images/user.png" background-size="cover" />
-
-      <div class="userinfo-nickname">
-        <card :text="userInfo.nickName"></card>
-      </div>
-    </div>
-
-    <div class="usermotto">
-      <div class="user-motto">
-        <card :text="motto"></card>
-      </div>
-    </div>
-
-    <form class="form-container">
-      <input type="text" class="form-control" :value="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form>
-
-
-    <div class="all">
-        <div class="left">
-        </div>
-        <div class="right">
-        </div>
-    </div>
   </div>
+</div>
 </template>
 
 <script>
-import card from '@/components/card'
+import Scale from '@/components/Scale'
 
 export default {
   data () {
     return {
-      motto: 'Hello miniprograme',
-      userInfo: {
-        nickName: 'mpvue',
-        avatarUrl: 'http://mpvue.com/assets/logo.png'
-      }
+      parentWidth:0,
+      targetNum:165,
+      weight:50
     }
   },
 
   components: {
-    card
+    Scale
   },
-
+  onLoad(){
+    let that=this;
+    wx.createSelectorQuery().select(".scale-wrapper")
+      .boundingClientRect(function(rect) {
+        that.parentWidth = rect.width;
+      })
+      .exec();
+  },
   methods: {
-    bindViewTap () {
-      const url = '../logs/main'
-      if (mpvuePlatform === 'wx') {
-        mpvue.switchTab({ url })
-      } else {
-        mpvue.navigateTo({ url })
-      }
+    selectValue(e){
+      console.log(e,'selectHeight')
     },
-    clickHandle (ev) {
-      console.log('clickHandle:', ev)
-      // throw {message: 'custom test'}
+    selectWeight(e){
+      console.log(e,'selectWeight')
     }
   },
 
-  created () {
-    // let app = getApp()
-  }
 }
 </script>
 
-<style scoped>
-.userinfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.userinfo-avatar {
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
-}
-
-.userinfo-nickname {
-  color: #aaa;
-}
-
-.usermotto {
-  margin-top: 150px;
-}
-
-.form-control {
-  display: block;
-  padding: 0 12px;
-  margin-bottom: 5px;
-  border: 1px solid #ccc;
-}
-.all{
-  width:7.5rem;
-  height:1rem;
-  background-color:blue;
-}
-.all:after{
-  display:block;
-  content:'';
-  clear:both;
-}
-.left{
-  float:left;
-  width:3rem;
-  height:1rem;
-  background-color:red;
-}
-
-.right{
-  float:left;
-  width:4.5rem;
-  height:1rem;
-  background-color:green;
+<style lang="less" scoped>
+.wrapper{
+  width: 100%;
+  padding: 20rpx;
+  box-sizing: border-box;
+  .scale-wrapper{
+    background-color: #fff;
+    width: 100%;
+    height: 800rpx;
+    border:1px solid #ddd;
+    border-radius: 10rpx;
+    box-shadow: 3px 2px 2px 2px #f1f1f1;
+  }
 }
 </style>
